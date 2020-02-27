@@ -23,7 +23,7 @@ class RedisConn:
             self.conn.close()
             await self.conn.wait_closed()
 
-    async def zadd(self, domains: List, timestamp: int):
+    async def zadd(self, *domains, timestamp: int):
         await self.ping()
         pipe = self.conn.pipeline()
         for domain in domains:

@@ -1,6 +1,6 @@
 [tool.poetry]
-name = ""
-version = "1.0.0"
+name = "parse"
+version = "0.0.1"
 description = ""
 authors = ["r.zabbarov <gdeon1337@gmail.com>"]
 
