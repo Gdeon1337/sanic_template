@@ -3,7 +3,7 @@ from sanic.request import Request
 from sanic.response import json
 
 
-blueprint = Blueprint('answers', url_prefix='/', strict_slashes=True)
+blueprint = Blueprint('answers', url_prefix='/answers', strict_slashes=True)
 
 
 @blueprint.post('/')
