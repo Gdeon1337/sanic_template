@@ -27,13 +27,21 @@ class RedisConn:
         await self.ping()
         pipe = self.conn.pipeline()
         for domain in domains:
-            pipe.zadd('urls', 0, f'{timestamp}:{domain}')
+            pipe.zadd('ap', timestamp, domain)
         await pipe.execute()
+
+    async def zrange(self, datetime_start: int, datetime_end: int) -> Set:
+        await self.ping()
+        return await self.conn.zrangebyscore(
+            'ap',
+            min=datetime_start-1,
+            max=datetime_end+1
+        )
 
     async def zrevrange_by_lex(self, datetime_start: int, datetime_end: int) -> Set:
         await self.ping()
         return await self.conn.zrevrangebylex(
-            'urls',
+            'ap',
             min=f'{datetime_start-1}'.encode('utf-8'),
             max=f'{datetime_end+1}'.encode('utf-8')
         )
