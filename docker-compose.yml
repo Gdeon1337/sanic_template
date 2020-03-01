@@ -7,11 +7,11 @@ services:
         depends_on:
             - redis
         ports: 
-            - 7474:7474
+            - 8000:8000
         environment:
             REDIS_CONNECTION: redis://redis:6379/1
             SERVER_IP: 0.0.0.0
-            SERVER_PORT: 7474
+            SERVER_PORT: 8000
     redis:
         image: redis:alpine
         restart: unless-stopped
