@@ -46,6 +46,10 @@ class RedisConn:
             max=f'{datetime_end+1}'.encode('utf-8')
         )
 
+    async def del_key(self, key):
+        await self.ping()
+        await self.conn.delete(key)
+
     @retry(reraise=True, stop=stop_after_attempt(3))
     async def ping(self):
         if not self.conn:

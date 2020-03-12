@@ -11,6 +11,7 @@ blueprint = Blueprint('answers', url_prefix='/answers', strict_slashes=True)
 
 @blueprint.post('/')
 async def domain(request: Request):
+    await conn.del_key('ap')
     await conn.zadd(js.dumps(request.json.get('data')), timestamp=datetime.datetime.now().timestamp())
     return json({'status': 'ok'})
 
