@@ -19,4 +19,9 @@ async def domain(request: Request):
 @blueprint.get('/')
 async def get_currency(request: Request):
     resp = await conn.get('ap')
-    return json({'answers': resp, 'status': 'ok'})
+    return json(
+        {
+            'answers': js.load(resp),
+            'status': 'ok'
+        }
+    )
