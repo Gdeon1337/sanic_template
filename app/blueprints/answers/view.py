@@ -12,11 +12,11 @@ blueprint = Blueprint('answers', url_prefix='/answers', strict_slashes=True)
 @blueprint.post('/')
 async def domain(request: Request):
     await conn.del_key('ap')
-    await conn.zadd(js.dumps(request.json.get('data')), timestamp=datetime.datetime.now().timestamp())
+    await conn.set('ap', js.dumps(request.json.get('data')))
     return json({'status': 'ok'})
 
 
 @blueprint.get('/')
 async def get_currency(request: Request):
-    resp = await conn.zrange(1, datetime.datetime.now().timestamp())
+    resp = await conn.get('ap')
     return json({'answers': resp, 'status': 'ok'})

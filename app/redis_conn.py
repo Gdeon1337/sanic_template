@@ -46,6 +46,14 @@ class RedisConn:
             max=f'{datetime_end+1}'.encode('utf-8')
         )
 
+    async def set(self, key, value):
+        await self.ping()
+        await self.conn.set(key, value)
+
+    async def get(self, key):
+        await self.ping()
+        await self.conn.get(key)
+
     async def del_key(self, key):
         await self.ping()
         await self.conn.delete(key)
