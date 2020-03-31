@@ -22,7 +22,7 @@ class Config(EnvConfig):
     PG_CONNECTION: str = None
     APP_DIR: str = app_dir
     PROJECT_ROOT: str = project_root
-
+    DDTARCE_HOSTNAME: str = 'localhost'
     IS_DOCKER: bool = False
     DEBUG: bool = False
     APP_NAME: str = app_name

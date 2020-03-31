@@ -1,4 +1,4 @@
-from . import executors, redis_loaders, validators
+from . import executors, trace, validators, password_hasher
 
 
-__all__ = ['redis_loaders', 'validators', 'executors']
+__all__ = ['trace', 'password_hasher', 'validators', 'executors']
