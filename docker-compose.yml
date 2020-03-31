@@ -5,19 +5,20 @@ services:
         build: .
         restart: unless-stopped
         depends_on:
-            - redis
-        ports: 
-            - 7474:7474
-        environment:
-            REDIS_CONNECTION: redis://redis:6379/1
-            SERVER_IP: 0.0.0.0
-            SERVER_PORT: 7474
-    redis:
-        image: redis:alpine
-        restart: unless-stopped
-        volumes:
-            - ./storage/redis/data:/data
+            - flask_api
         ports:
-            - 6389:6379
+            - 8000:8000
+        environment:
+            SERVER_IP: 0.0.0.0
+            SERVER_PORT: 8000
+            PG_CONNECTION:
+    flask_api:
+        image: gdeon/flask_parse:develop
+        restart: unless-stopped
+        ports:
+            - 5000:5000
+        environment:
+            REDIS_CONN: redis://redis:6379/1
+
 volumes:
-    redis:
+    flask_api:

@@ -1,5 +1,5 @@
 import asyncio
-from typing import Optional
+from typing import Optional, List
 
 from ddtrace import tracer
 from ddtrace.context import Context
@@ -37,3 +37,10 @@ def create_task(coro, context: Optional[Context] = None, loop: Optional[asyncio.
     context = context or current_context()
     loop = loop or asyncio.get_event_loop()
     return loop.create_task(_async_warp_coro_trace_context(context, coro))
+
+
+def gather(func, items: List, expand: bool = False, context: Optional[Context] = None):
+    context = context or current_context()
+    if expand:
+        return asyncio.gather(*[_async_warp_trace_context(context, func, *item) for item in items])
+    return asyncio.gather(*[_async_warp_trace_context(context, func, item) for item in items])

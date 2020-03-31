@@ -1,4 +1,4 @@
-from sanic import Sanic
+from sanic import Sanic, Blueprint
 
 from . import config, extensions
 from .blueprints import blueprint, blueprint_exceptions
@@ -13,9 +13,16 @@ def create_app(config_object: object = config.Config) -> Sanic:
 
 
 def register_extensions(app: Sanic):
-    extensions.register_redis(app)
+    extensions.register_db(app)
+    extensions.register_cors(app)
+    extensions.register_async_helpers(app)
+    extensions.register_ddtrace(app)
+    extensions.register_argon2(app)
+    extensions.register_jwt(app)
 
 
 def register_blueprints(app: Sanic):
-    app.blueprint(blueprint)
-    app.blueprint(blueprint_exceptions)
+    app.blueprint(Blueprint.group(
+        blueprint,
+        blueprint_exceptions
+    ))
