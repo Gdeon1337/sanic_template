@@ -51,6 +51,10 @@ async def create_answer(request: Request):
 
 async def create_points(points):
     for point in points:
+        point = await Point.query.where(Point.year == point.get('year')).where(Point.id_dot == point.get('id_dot'))\
+            .gino.first()
+        if point:
+            continue
         await Point.create(
             year=point.get('year'),
             mstet=point.get('mstet'),
