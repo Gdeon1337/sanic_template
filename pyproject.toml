@@ -5,8 +5,8 @@ description = "sanic"
 authors = ["r.zabbarov <gdeon1337@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-dataclasses = {version = "^0.6",python = "<3.7"}
+python = "^3.6"
+dataclasses = {version = "^0.6",python = "<3.6"}
 six = "^1.13"
 toml = "^0.10.0"
 ddtrace = "^0.30"

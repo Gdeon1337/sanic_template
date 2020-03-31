@@ -2,6 +2,7 @@ version: '2.3'
 
 services:
     api:
+        image: gdeon/sanic:develop
         build: .
         restart: unless-stopped
         depends_on:
@@ -11,7 +12,7 @@ services:
         environment:
             SERVER_IP: 0.0.0.0
             SERVER_PORT: 8000
-            PG_CONNECTION:
+            PG_CONNECTION: postgresql://admin:admin@31.184.215.77:5432/point_db
     flask_api:
         image: gdeon/flask_parse:develop
         restart: unless-stopped
