@@ -4,9 +4,8 @@ services:
     api:
         image: gdeon/sanic:develop
         build: .
+        image: gdeon/sanic:develop
         restart: unless-stopped
-        depends_on:
-            - flask_api
         ports:
             - 8000:8000
         environment:
@@ -23,3 +22,6 @@ services:
 
 volumes:
     flask_api:
+=======
+            PG_CONNECTION:
+>>>>>>> c0c47e19ebc135a6751550541874a394e14b1e4a

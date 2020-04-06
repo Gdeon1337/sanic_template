@@ -76,12 +76,12 @@ async def authenticate(request: Request) -> User:
             if await argon2.async_check_needs_rehash(user.password.decode('utf-8')):
                 rehashed_password = await argon2.async_hash(password)
                 await user.update(password=rehashed_password.encode('utf-8')).apply()
-            return user
+            return {'user_id': str(user.id), 'username': user.login}
     raise exceptions.AuthenticationFailed('Login or password is incorrect.')
 
 
 async def retrieve_user(_, payload: Dict) -> User:
-    user_id = payload.get('id')
+    user_id = payload.get('user_id')
     user = await User.query.where(User.id == user_id).gino.first()
     return user
 

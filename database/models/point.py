@@ -19,8 +19,8 @@ class Point(db.Model):
     project_price_predict = db.Column(db.Numeric(precision=11, scale=4, asdecimal=False), nullable=True)
     comment = db.Column(db.String(), nullable=True)
 
-    latitude = db.Column(db.Integer(), nullable=True)
-    longitude = db.Column(db.Integer(), nullable=True)
+    latitude = db.Column(db.Float(), nullable=True)
+    longitude = db.Column(db.Float(), nullable=True)
 
     failure = db.Column(db.Boolean(), nullable=False)
     date_failure = db.Column(db.DateTime(), nullable=True)
@@ -42,5 +42,7 @@ class Point(db.Model):
     project_price_ks2 = db.Column(db.Numeric(precision=11, scale=4, asdecimal=False), nullable=True)
     date_ks2 = db.Column(db.DateTime(), nullable=True)
     google_doc_link = db.Column(db.String(), nullable=True)
+
+    id_dot = db.Column(db.Integer(), nullable=True)
 
     user_id = db.Column(UUID(), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, index=True, comment='ID пользователя')  # noqa)

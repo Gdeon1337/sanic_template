@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 72e9cfdfc1c7
+Revision ID: 400ec0142e98
 Revises: 
-Create Date: 2020-03-31 20:03:14.223026
+Create Date: 2020-03-31 22:25:50.690426
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '72e9cfdfc1c7'
+revision = '400ec0142e98'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,8 +36,8 @@ def upgrade():
     sa.Column('client', sa.String(), nullable=False),
     sa.Column('project_price_predict', sa.Numeric(precision=11, scale=4, asdecimal=False), nullable=True),
     sa.Column('comment', sa.String(), nullable=True),
-    sa.Column('latitude', sa.Integer(), nullable=True),
-    sa.Column('longitude', sa.Integer(), nullable=True),
+    sa.Column('latitude', sa.Float(), nullable=True),
+    sa.Column('longitude', sa.Float(), nullable=True),
     sa.Column('failure', sa.Boolean(), nullable=False),
     sa.Column('date_failure', sa.DateTime(), nullable=True),
     sa.Column('application_source', sa.String(), nullable=True),
@@ -54,6 +54,7 @@ def upgrade():
     sa.Column('project_price_ks2', sa.Numeric(precision=11, scale=4, asdecimal=False), nullable=True),
     sa.Column('date_ks2', sa.DateTime(), nullable=True),
     sa.Column('google_doc_link', sa.String(), nullable=True),
+    sa.Column('id_dot', sa.Integer(), nullable=True),
     sa.Column('user_id', postgresql.UUID(), nullable=True, comment='ID пользователя'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
