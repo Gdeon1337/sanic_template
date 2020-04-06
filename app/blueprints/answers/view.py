@@ -1,10 +1,10 @@
 from sanic import Blueprint
 from sanic.request import Request
 from sanic.response import json
-from database import Point
+from database import Point, User
 from app.helpers.executors import gather
 from sanic_jwt.decorators import inject_user, protected
-from app.helpers.validators import raise_if_empty
+from app.helpers.validators import raise_if_empty, raise_if_not_float
 
 blueprint = Blueprint('answers', url_prefix='/answers', strict_slashes=True)
 
@@ -18,7 +18,10 @@ async def answer(request: Request):
 
 @blueprint.get('/new-answers')
 async def new_answer(request: Request):
-    points = await Point.query.where(Point.brigadier == None).where(Point.failure.is_(False)).gino.all()
+    points = await Point.query.where(Point.brigadier is None)\
+        .where(Point.failure.is_(False))\
+        .where(Point.auction_price is None)\
+        .gino.all()
     points = await gather(load_json, points)
     return json(points)
 
@@ -28,9 +31,12 @@ async def new_answer(request: Request):
 @inject_user()
 async def create_user_point(request: Request, user):
     point_id = request.json.get('point_id')
-    raise_if_empty(point_id)
+    auction_price = request.json.get('auction_price')
+    raise_if_empty(point_id, auction_price)
+    raise_if_not_float(auction_price)
     point = await Point.query.where(Point.id == point_id).gino.first_or_404()
     point = point.update(brigadier=user.login)
+    point = point.update(auction_price=float(auction_price))
     await point.update(user_id=user.id).apply()
     return json({'status': 'ok'})
 
@@ -42,6 +48,21 @@ async def get_user_point(request: Request, user):
     points = await Point.query.where(Point.user_id == user.id).gino.all()
     points = await gather(load_json, points)   
     return json(points)
+
+
+@blueprint.get('/new-orders')
+async def get_user_point(request: Request):
+    users = await User.query.gino.all()
+    json_users = []
+    for user in users:
+        points = await Point.query.where(Point.user_id == user.id).gino.all()
+        points = await gather(load_json, points)
+        json_users.append({
+            'user': user.login,
+            'user_id': str(user.id),
+            'orders': points
+        })
+    return json(json_users)
 
 
 @blueprint.post('')
@@ -102,6 +123,7 @@ async def load_json(point: Point):
             'place': point.place,
             'address': point.address,
             'client': point.client,
+            'auction_price': point.auction_price,
             'project_price_predict': point.project_price_predict,
             'coordinates': {
                 'latitude': point.latitude,

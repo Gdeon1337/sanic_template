@@ -43,6 +43,7 @@ class Point(db.Model):
     date_ks2 = db.Column(db.DateTime(), nullable=True)
     google_doc_link = db.Column(db.String(), nullable=True)
 
-    id_dot = db.Column(db.Integer(), nullable=True)
+    id_dot = db.Column(db.String(), nullable=True)
+    auction_price = db.Column(db.Float(), nullable=True)
 
     user_id = db.Column(UUID(), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, index=True, comment='ID пользователя')  # noqa)
