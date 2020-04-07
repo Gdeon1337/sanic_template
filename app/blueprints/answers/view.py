@@ -41,6 +41,18 @@ async def create_user_point(request: Request, user):
     return json({'status': 'ok'})
 
 
+@blueprint.delete('/user-point')
+@protected()
+@inject_user()
+async def delete_user_point(request: Request, user):
+    point_id = request.json.get('point_id')
+    raise_if_empty(point_id)
+    point = await Point.query.where(Point.id == point_id).gino.first_or_404()
+    point = point.update(brigadier=None)
+    await point.update(user_id=None).apply()
+    return json({'status': 'ok'})
+
+
 @blueprint.get('/user-point')
 @protected()
 @inject_user()
