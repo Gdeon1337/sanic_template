@@ -63,7 +63,7 @@ async def get_user_point(request: Request, user):
 
 
 @blueprint.get('/new-orders')
-async def get_user_point(request: Request):
+async def new_orders(request: Request):
     users = await User.query.gino.all()
     json_users = []
     for user in users:

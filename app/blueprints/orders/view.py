@@ -117,7 +117,6 @@ async def update(request: Request, user):
 @protected()
 async def create_point(request: Request):
     order_user_id = request.json.get('order_user_id')
-    user_id = request.json.get('user_id')
     order_id = request.json.get('order_id')
     raise_if_empty(order_id, user_id, order_user_id)
     order = await Order.query.where(Order.id == order_id).gino.first_or_404()
@@ -135,14 +134,15 @@ async def create_point(request: Request):
         comment=order.comment,
         latitude=order.latitude,
         longitude=order.longitude,
-        user_id=user_id,
+        user_id=order_user.user_id,
         auction_price=order_user.auction_price
     )
     return point
 
 
 async def load_json(point):
-    users = await OrderUsers.query.where(OrderUsers.order_id == point.id).gino.all()
+    users = await OrderUsers.join(User).select().query.where(OrderUsers.order_id == point.id)\
+        .gino.load(OrderUsers.load(login=User.login)).all()
     return {
         'info': {
             'id': str(point.id),
