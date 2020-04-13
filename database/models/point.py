@@ -1,9 +1,16 @@
 from uuid import uuid4
+from enum import Enum
 
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ENUM
 from sqlalchemy.sql import func
 
 from .db import db
+
+
+class Status(Enum):
+    IN_WORK = 'IN_WORK'
+    COMPLETED = 'COMPLETED'
+    INCOMPLETE = 'INCOMPLETE'
 
 
 class Point(db.Model):
@@ -44,6 +51,5 @@ class Point(db.Model):
     google_doc_link = db.Column(db.String(), nullable=True)
 
     id_dot = db.Column(db.String(), nullable=True)
-    auction_price = db.Column(db.Float(), nullable=True)
-
     user_id = db.Column(UUID(), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, index=True, comment='ID пользователя')  # noqa)
+    status = db.Column(ENUM(Status, name='status'), nullable=False, index=True, comment='Тип точки')  # noqa

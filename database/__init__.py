@@ -1,10 +1,13 @@
 from .models import (
-    Point, db, User
+    Point, db, User, Order, OrderUsers, Role
 )
 
 
 __all__ = [
     'db',
     'User',
-    'Point'
+    'Point',
+    'OrderUsers',
+    'Order',
+    'Role'
 ]

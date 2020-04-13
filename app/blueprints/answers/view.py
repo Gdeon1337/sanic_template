@@ -1,7 +1,7 @@
 from sanic import Blueprint
 from sanic.request import Request
 from sanic.response import json
-from database import Point, User
+from database import Point, User, Order, OrderUsers
 from app.helpers.executors import gather
 from sanic_jwt.decorators import inject_user, protected
 from app.helpers.validators import raise_if_empty, raise_if_not_float
@@ -18,11 +18,9 @@ async def answer(request: Request):
 
 @blueprint.get('/new-answers')
 async def new_answer(request: Request):
-    points = await Point.query.where(Point.brigadier == None)\
-        .where(Point.failure.is_(False))\
-        .where(Point.auction_price == None)\
+    points = await Order.query.where(Order.activate.is_(True))\
         .gino.all()
-    points = await gather(load_json, points)
+    points = await gather(load_json_order, points)
     return json(points)
 
 
@@ -34,10 +32,12 @@ async def create_user_point(request: Request, user):
     auction_price = request.json.get('auction_price')
     raise_if_empty(point_id, auction_price)
     raise_if_not_float(auction_price)
-    point = await Point.query.where(Point.id == point_id).gino.first_or_404()
-    point = point.update(brigadier=user.login)
-    point = point.update(auction_price=float(auction_price))
-    await point.update(user_id=user.id).apply()
+    point = await Order.query.where(Order.id == point_id).gino.first_or_404()
+    OrderUsers.create(
+        user_id=user.id,
+        order_id=point.id,
+        auction_price=float(auction_price)
+    )
     return json({'status': 'ok'})
 
 
@@ -165,5 +165,25 @@ async def load_json(point: Point):
             'project_price_ks2': point.project_price_ks2,
             'date_ks2': point.date_ks2.isoformat() if point.date_ks2 else None,
             'google_doc_link': point.google_doc_link
+        }
+    }
+
+
+async def load_json_order(point):
+    return {
+        'info': {
+            'id': str(point.id),
+            'year': point.year,
+            'mstet': point.mstet,
+            'ltc': point.ltc,
+            'place': point.place,
+            'address': point.address,
+            'client': point.client,
+            'project_price_predict': point.project_price_predict,
+            'user_id': point.user_id,
+            'coordinates': {
+                'latitude': point.latitude,
+                'longitude': point.longitude
+            }
         }
     }
