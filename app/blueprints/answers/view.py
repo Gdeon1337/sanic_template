@@ -18,9 +18,9 @@ async def answer(request: Request):
 
 @blueprint.get('/new-answers')
 async def new_answer(request: Request):
-    points = await Point.query.where(Point.brigadier is None)\
+    points = await Point.query.where(Point.brigadier == None)\
         .where(Point.failure.is_(False))\
-        .where(Point.auction_price is None)\
+        .where(Point.auction_price == None)\
         .gino.all()
     points = await gather(load_json, points)
     return json(points)
@@ -58,7 +58,7 @@ async def delete_user_point(request: Request, user):
 @inject_user()
 async def get_user_point(request: Request, user):
     points = await Point.query.where(Point.user_id == user.id).gino.all()
-    points = await gather(load_json, points)   
+    points = await gather(load_json, points)
     return json(points)
 
 
@@ -87,11 +87,13 @@ async def create_answer(request: Request):
 async def create_points(points):
     from datetime import datetime
     for point in points:
-        _point = await Point.query.where(Point.year == point.get('year')).where(Point.id_dot == point.get('id_dot'))\
+        _point = await Point.query.where(Point.year == point.get('year')).where(Point.id_dot == str(point.get('id_dot')))\
             .gino.first()
         if _point:
             continue
         await Point.create(
+            auction_price=None,
+            id_dot=str(point.get('id_dot')),
             year=point.get('year'),
             mstet=point.get('mstet'),
             ltc=point.get('ltc'),
