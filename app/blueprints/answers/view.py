@@ -25,6 +25,96 @@ async def get_point(request: Request):
     return json(point)
 
 
+@blueprint.put('/point')
+async def update_point(request: Request):
+    from datetime import datetime
+    point_id = request.args.get('point_id')
+    raise_if_empty(point_id)
+    point = await Point.query.where(Point.id == point_id).gino.first_or_404()
+    year = request.json.get('year')
+    mstet = request.json.get('mstet')
+    ltc = request.json.get('ltc')
+    place = request.json.get('place')
+    address = request.json.get('address')
+    client = request.json.get('client')
+    project_price_predict = request.json.get('project_price_predict')
+    comment = request.json.get('comment')
+    latitude = request.json.get('latitude')
+    longitude = request.json.get('longitude')
+    failure = request.json.get('failure')
+    date_failure = request.json.get('date_failure')
+    application_source = request.json.get('application_source')
+    hermes_number = request.json.get('hermes_number')
+    hermes_deadline = datetime.strptime(request.json.get('hermes_deadline'), "%Y-%m-%d %H:%M:%S") if request.json.get(
+        'hermes_deadline') else None
+    hermes_smr_successful = request.json.get('hermes_smr_successful')
+    brigadier = request.json.get('brigadier')
+    project_engineer = request.json.get('project_engineer')
+    smr = request.json.get('smr')
+    svarka = request.json.get('svarka')
+    subcontracting_price = request.json.get('subcontracting_price')
+    material_price = request.json.get('material_price')
+    ks11_signed_by_ltc = request.json.get('ks11_signed_by_ltc')
+    project_price_ks2 = request.json.get('project_price_ks2')
+    date_ks2 = datetime.strptime(request.json.get('date_ks2'), "%Y-%m-%d %H:%M:%S") if request.json.get('date_ks2') else None
+    google_doc_link = request.json.get('google_doc_link')
+    if year:
+        point = point.update(year=year)
+    if mstet:
+        point = point.update(mstet=mstet)
+    if ltc:
+        point = point.update(ltc=ltc)
+    if place:
+        point = point.update(place=place)
+    if address:
+        point = point.update(address=address)
+    if client:
+        point = point.update(client=client)
+    if project_price_predict:
+        point = point.update(project_price_predict=project_price_predict)
+    if comment:
+        point = point.update(comment=comment)
+    if latitude:
+        point = point.update(latitude=latitude)
+    if longitude:
+        point = point.update(longitude=longitude)
+    if failure:
+        point = point.update(failure=failure)
+    if date_failure:
+        point = point.update(date_failure=date_failure)
+    if application_source:
+        point = point.update(application_source=application_source)
+    if hermes_number:
+        point = point.update(hermes_number=hermes_number)
+    if hermes_deadline:
+        point = point.update(hermes_deadline=hermes_deadline)
+    if hermes_smr_successful:
+        point = point.update(hermes_smr_successful=hermes_smr_successful)
+    if brigadier:
+        point = point.update(brigadier=brigadier)
+    if project_engineer:
+        point = point.update(project_engineer=project_engineer)
+    if smr:
+        point = point.update(smr=smr)
+    if svarka:
+        point = point.update(svarka=svarka)
+    if subcontracting_price:
+        point = point.update(subcontracting_price=subcontracting_price)
+    if material_price:
+        point = point.update(material_price=material_price)
+    if ks11_signed_by_ltc:
+        point = point.update(ks11_signed_by_ltc=ks11_signed_by_ltc)
+    if project_price_ks2:
+        point = point.update(project_price_ks2=project_price_ks2)
+    if date_ks2:
+        point = point.update(date_ks2=date_ks2)
+    if google_doc_link:
+        point = point.update(google_doc_link=google_doc_link)
+    await point.apply()
+    point = await load_json(point)
+    return json(point)
+
+
 @blueprint.get('/new-answers')
 @protected()
 @inject_user()

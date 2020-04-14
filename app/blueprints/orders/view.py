@@ -82,23 +82,23 @@ async def update(request: Request):
     raise_if_empty(order_id)
     order = await Order.query.where(Order.id == order_id).gino.first_or_404()
     if year:
-        order.update(year=year)
+        order = order.update(year=year)
     if mstet:
-        order.update(mstet=mstet)
+        order = order.update(mstet=mstet)
     if ltc:
-        order.update(ltc=ltc)
+        order = order.update(ltc=ltc)
     if address:
-        order.update(address=address)
+        order = order.update(address=address)
     if place:
-        order.update(place=place)
+        order = order.update(place=place)
     if project_price_predict:
-        order.update(project_price_predict=project_price_predict)
+        order = order.update(project_price_predict=project_price_predict)
     if client:
-        order.update(client=client)
+        order = order.update(client=client)
     if google_doc_link:
-        order.update(google_doc_link=google_doc_link)
+        order = order.update(google_doc_link=google_doc_link)
     if comment:
-        order.update(comment=comment)
+        order = order.update(comment=comment)
     await order.apply()
     order = await load_json(order)
     return json(order)
