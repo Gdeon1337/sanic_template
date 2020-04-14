@@ -1,7 +1,7 @@
 from sanic import Blueprint
 from sanic.request import Request
 from sanic.response import json
-from database import Point, User, Order, OrderUsers
+from database import Point, User, Order, OrderUsers, StatusPoint
 from sanic_jwt.decorators import inject_user, protected
 from app.helpers.validators import raise_if_empty, raise_if_not_float
 
@@ -9,9 +9,7 @@ blueprint = Blueprint('orders', url_prefix='/orders', strict_slashes=True)
 
 
 @blueprint.post('')
-@protected()
-@inject_user()
-async def create(request: Request, user):
+async def create(request: Request):
     year = request.json.get('year')
     mstet = request.json.get('mstet')
     ltc = request.json.get('ltc')
@@ -36,16 +34,14 @@ async def create(request: Request, user):
         project_price_predict=project_price_predict,
         comment=comment,
         latitude=latitude,
-        longitude=longitude,
-        user_id=user.id
+        longitude=longitude
     )
-    return json(load_json(order))
+    order = await load_json(order)
+    return json(order)
 
 
 @blueprint.delete('')
-@protected()
-@inject_user()
-async def delete(request: Request, user):
+async def delete(request: Request):
     order_id = request.json.get('order_id')
     raise_if_empty(order_id)
     order = await Order.query.where(Order.id == order_id).gino.first_or_404()
@@ -54,31 +50,25 @@ async def delete(request: Request, user):
 
 
 @blueprint.get('')
-@protected()
-@inject_user()
-async def get(request: Request, user):
-    order_id = request.json.get('order_id')
+async def get(request: Request):
+    order_id = request.args.get('order_id')
     if order_id:
         order = await Order.query.where(Order.id == order_id).gino.first_or_404()
         return json(load_json(order))
-    orders = await Order.query.where(Order.user_id == user.id).where(Order.activate.is_(True)).gino.all()
-    orders = [load_json(order) for order in orders]
-    return orders
+    orders = await Order.query.where(Order.activate.is_(True)).gino.all()
+    orders = [await load_json(order) for order in orders]
+    return json(orders)
 
 
 @blueprint.get('/in-activate')
-@protected()
-@inject_user()
-async def get_in(request: Request, user):
+async def get_in(request: Request):
     orders = await Order.query.where(Order.user_id == user.id).where(Order.activate.is_(False)).gino.all()
-    orders = [load_json(order) for order in orders]
-    return orders
+    orders = [await load_json(order) for order in orders]
+    return json(orders)
 
 
 @blueprint.put('')
-@protected()
-@inject_user()
-async def update(request: Request, user):
+async def update(request: Request):
     year = request.json.get('year')
     mstet = request.json.get('mstet')
     ltc = request.json.get('ltc')
@@ -110,15 +100,15 @@ async def update(request: Request, user):
     if comment:
         order.update(comment=comment)
     await order.apply()
-    return json(load_json(order))
+    order = await load_json(order)
+    return json(order)
 
 
 @blueprint.post('/activate')
-@protected()
 async def create_point(request: Request):
     order_user_id = request.json.get('order_user_id')
     order_id = request.json.get('order_id')
-    raise_if_empty(order_id, user_id, order_user_id)
+    raise_if_empty(order_id, order_user_id)
     order = await Order.query.where(Order.id == order_id).gino.first_or_404()
     order_user = await OrderUsers.query.where(OrderUsers.id == order_user_id).gino.first_or_404()
     await order.update(activate=False).apply()
@@ -130,18 +120,21 @@ async def create_point(request: Request):
         place=order.place,
         address=order.address,
         client=order.client,
-        project_price_predict=order.project_price_predict,
+        project_price_predict=order_user.auction_price,
         comment=order.comment,
         latitude=order.latitude,
         longitude=order.longitude,
         user_id=order_user.user_id,
-        auction_price=order_user.auction_price
+        failure=False,
+        status=StatusPoint.IN_WORK
     )
-    return point
+    order = await load_json(order)
+    return json(order)
 
 
 async def load_json(point):
-    users = await OrderUsers.join(User).select().query.where(OrderUsers.order_id == point.id)\
+    u = OrderUsers.join(User).select()
+    users = await u.where(OrderUsers.order_id == point.id)\
         .gino.load(OrderUsers.load(login=User.login)).all()
     return {
         'info': {

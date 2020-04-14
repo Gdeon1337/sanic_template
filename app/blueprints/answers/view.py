@@ -1,7 +1,7 @@
 from sanic import Blueprint
 from sanic.request import Request
 from sanic.response import json
-from database import Point, User, Order, OrderUsers
+from database import Point, User, Order, OrderUsers, StatusPoint
 from app.helpers.executors import gather
 from sanic_jwt.decorators import inject_user, protected
 from app.helpers.validators import raise_if_empty, raise_if_not_float
@@ -16,11 +16,28 @@ async def answer(request: Request):
     return json(points)
 
 
+@blueprint.get('/point')
+async def get_point(request: Request):
+    point_id = request.args.get('point_id')
+    raise_if_empty(point_id)
+    point = await Point.query.where(Point.id == point_id).gino.first_or_404()
+    point = await load_json(point)
+    return json(point)
+
+
 @blueprint.get('/new-answers')
-async def new_answer(request: Request):
+@protected()
+@inject_user()
+async def new_answer(request: Request, user):
+    points_user = await OrderUsers.query.where(OrderUsers.user_id == user.id).gino.all()
     points = await Order.query.where(Order.activate.is_(True))\
         .gino.all()
-    points = await gather(load_json_order, points)
+    points_js = []
+    for point in points:
+        order_user = [order for order in points_user if order.order_id == point.id]
+        if not order_user:
+            points_js.append(point)
+    points = await gather(load_json_order, points_js)
     return json(points)
 
 
@@ -33,7 +50,7 @@ async def create_user_point(request: Request, user):
     raise_if_empty(point_id, auction_price)
     raise_if_not_float(auction_price)
     point = await Order.query.where(Order.id == point_id).gino.first_or_404()
-    OrderUsers.create(
+    await OrderUsers.create(
         user_id=user.id,
         order_id=point.id,
         auction_price=float(auction_price)
@@ -42,9 +59,7 @@ async def create_user_point(request: Request, user):
 
 
 @blueprint.delete('/user-point')
-@protected()
-@inject_user()
-async def delete_user_point(request: Request, user):
+async def delete_user_point(request: Request):
     point_id = request.json.get('point_id')
     raise_if_empty(point_id)
     point = await Point.query.where(Point.id == point_id).gino.first_or_404()
@@ -92,7 +107,7 @@ async def create_points(points):
         if _point:
             continue
         await Point.create(
-            auction_price=None,
+            status=StatusPoint.IN_WORK,
             id_dot=str(point.get('id_dot')),
             year=point.get('year'),
             mstet=point.get('mstet'),
@@ -137,7 +152,6 @@ async def load_json(point: Point):
             'place': point.place,
             'address': point.address,
             'client': point.client,
-            'auction_price': point.auction_price,
             'project_price_predict': point.project_price_predict,
             'coordinates': {
                 'latitude': point.latitude,
@@ -185,5 +199,28 @@ async def load_json_order(point):
                 'latitude': point.latitude,
                 'longitude': point.longitude
             }
+        },
+        'application': {
+            'application_source': None,
+            'hermes': {
+                'hermes_number': None,
+                'hermes_deadline': None,
+                'hermes_smr_successful': None
+            }
+        },
+        'worker': {
+            'brigadier': None,
+            'project_engineer': None
+        },
+        'documents': {
+            'smr': False,
+            'svarka': False,
+            'subcontracting_price': None,
+            'material_price': None,
+            'ks11_signed_by_ltc': None,
+            'project_price_ks2': None,
+            'date_ks2': None,
+            'google_doc_link': point.google_doc_link
         }
     }
+

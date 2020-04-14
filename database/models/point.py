@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from .db import db
 
 
-class Status(Enum):
+class StatusPoint(Enum):
     IN_WORK = 'IN_WORK'
     COMPLETED = 'COMPLETED'
     INCOMPLETE = 'INCOMPLETE'
@@ -52,4 +52,4 @@ class Point(db.Model):
 
     id_dot = db.Column(db.String(), nullable=True)
     user_id = db.Column(UUID(), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, index=True, comment='ID пользователя')  # noqa)
-    status = db.Column(ENUM(Status, name='status'), nullable=False, index=True, comment='Тип точки')  # noqa
+    status = db.Column(ENUM(StatusPoint, name='status_point'), nullable=False, index=True, comment='Тип точки')  # noqa

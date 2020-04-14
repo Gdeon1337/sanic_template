@@ -22,9 +22,9 @@ def register_extensions(app: Sanic):
 
 
 def register_blueprints(app: Sanic):
-    from app.blueprints import answers
+    from app.blueprints import orders
     app.blueprint(Blueprint.group(
         blueprint,
-        answers.blueprint,
+        orders.blueprint,
         blueprint_exceptions
     ))
