@@ -127,7 +127,8 @@ async def create_point(request: Request):
         user_id=order_user.user_id,
         failure=False,
         status=StatusPoint.IN_WORK,
-        brigadier='Необходимо заполнить'
+        brigadier='Необходимо заполнить',
+        google_disk_link=order_user.google_disk_link
     )
     order = await load_json(order)
     return json(order)

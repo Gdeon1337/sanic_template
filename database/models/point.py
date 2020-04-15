@@ -49,7 +49,7 @@ class Point(db.Model):
     project_price_ks2 = db.Column(db.Numeric(precision=11, scale=4, asdecimal=False), nullable=True)
     date_ks2 = db.Column(db.DateTime(), nullable=True)
     google_doc_link = db.Column(db.String(), nullable=True)
-
+    google_disk_link = db.Column(db.String(), nullable=True)
     id_dot = db.Column(db.String(), nullable=True)
     user_id = db.Column(UUID(), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, index=True, comment='ID пользователя')  # noqa)
     status = db.Column(ENUM(StatusPoint, name='status_point'), nullable=False, index=True, comment='Тип точки')  # noqa

@@ -137,13 +137,14 @@ async def new_answer(request: Request, user):
 async def create_user_point(request: Request, user):
     point_id = request.json.get('point_id')
     auction_price = request.json.get('auction_price')
-    raise_if_empty(point_id, auction_price)
-    raise_if_not_float(auction_price)
+    google_disk_link=request.json.get('google_disk_link')
+    raise_if_empty(point_id)
     point = await Order.query.where(Order.id == point_id).gino.first_or_404()
     await OrderUsers.create(
         user_id=user.id,
         order_id=point.id,
-        auction_price=float(auction_price)
+        auction_price=float(auction_price) if auction_price else None,
+        google_disk_link=google_disk_link
     )
     return json({'status': 'ok'})
 
@@ -243,6 +244,7 @@ async def load_json(point: Point):
             'address': point.address,
             'client': point.client,
             'project_price_predict': point.project_price_predict,
+            'google_disk_link': point.google_disk_link,
             'coordinates': {
                 'latitude': point.latitude,
                 'longitude': point.longitude
