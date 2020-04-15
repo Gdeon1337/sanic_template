@@ -126,7 +126,8 @@ async def create_point(request: Request):
         longitude=order.longitude,
         user_id=order_user.user_id,
         failure=False,
-        status=StatusPoint.IN_WORK
+        status=StatusPoint.IN_WORK,
+        brigadier='Необходимо заполнить'
     )
     order = await load_json(order)
     return json(order)
