@@ -17,6 +17,7 @@ async def answer(request: Request):
 
 
 @blueprint.get('/point')
+#@protected()
 async def get_point(request: Request):
     point_id = request.args.get('point_id')
     raise_if_empty(point_id)

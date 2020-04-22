@@ -58,9 +58,9 @@ class JWT(Initialize):
         self.bp.strict_slashes = self.config.strict_slashes()
 
 
-async def authenticate(request: Request) -> User:
-    login = request.form.get('login') if request.form.get("login") else request.json.get('login') if request.json.get('login') else None
-    password = request.form.get('password') if request.form.get('password') else request.json.get('password') if request.json.get('password') else None
+async def authenticate(request: Request) -> User
+    login = request.json.get('login') if request.json.get('login') else request.form.get('login')
+    password = request.json.get('password') if request.json.get('password')  else request.form.get('password') 
     if not login or not password:
         raise exceptions.AuthenticationFailed('Missing login or password.')
 

@@ -50,6 +50,7 @@ async def delete(request: Request):
 
 
 @blueprint.get('')
+#@protected()
 async def get(request: Request):
     order_id = request.args.get('order_id')
     if order_id:
@@ -105,6 +106,7 @@ async def update(request: Request):
 
 
 @blueprint.post('/activate')
+#@protected()
 async def create_point(request: Request):
     order_user_id = request.json.get('order_user_id')
     order_id = request.json.get('order_id')
@@ -150,6 +152,7 @@ async def load_json(point):
             'client': point.client,
             'project_price_predict': point.project_price_predict,
             'user_id': point.user_id,
+            'comment': point.comment,
             'coordinates': {
                 'latitude': point.latitude,
                 'longitude': point.longitude
