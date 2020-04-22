@@ -62,6 +62,7 @@ async def authenticate(request: Request) -> User:
     validators.raise_if_empty(request.json)
     login = request.json.get('login')
     password = request.json.get('password')
+    breakpoint()
     if not login or not password:
         raise exceptions.AuthenticationFailed('Missing login or password.')
 
