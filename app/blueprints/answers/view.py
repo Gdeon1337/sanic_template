@@ -177,6 +177,7 @@ async def new_orders(request: Request):
         points = await Point.query.where(Point.user_id == user.id).gino.all()
         points = await gather(load_json, points)
         json_users.append({
+            'user_name': user.name,
             'user': user.login,
             'user_id': str(user.id),
             'orders': points
