@@ -140,7 +140,7 @@ async def create_point(request: Request):
 async def load_json(point):
     u = OrderUsers.join(User).select()
     users = await u.where(OrderUsers.order_id == point.id)\
-        .gino.load(OrderUsers.load(login=User.login)).all()
+        .gino.load(OrderUsers.load(login=User.name)).all()
     return {
         'info': {
             'id': str(point.id),

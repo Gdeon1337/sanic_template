@@ -28,7 +28,6 @@ def register_jwt(app: Sanic):
     app.jwt = jwt.JWT(
         app,
         authenticate=jwt.authenticate,
-        cookie_set=True,
         retrieve_user=jwt.retrieve_user,
         class_views=[('/logout', jwt.Logout)],
     )
