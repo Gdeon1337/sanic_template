@@ -142,7 +142,7 @@ async def create_user_point(request: Request, user):
     file = request.files.get('data')
     raise_if_empty(point_id)
     point = await Order.query.where(Order.id == point_id).gino.first_or_404()
-    await OrderUsers.create(
+    order_user = await OrderUsers.create(
         user_id=user.id,
         order_id=point.id,
         auction_price=float(auction_price) if auction_price else None,
@@ -151,7 +151,22 @@ async def create_user_point(request: Request, user):
         file_type=file.type if file else None,
         file_data=file.body if file else None
     )
-    return json({'status': 'ok'})
+    return json({'status': 'ok', 'order_user_id': order_user.id})
+
+
+@blueprint.post('/file')
+@protected()
+async def create_user_point(request: Request):
+    order_user_id = request.json.get('order_user_id')
+    file = request.files.get('data')
+    raise_if_empty(order_user_id)
+    order_user = await OrderUsers.query.where(OrderUsers.id == order_user_id).gino.first_or_404()
+    await order_user.update(
+        file_name=file.name if file else None,
+        file_type=file.type if file else None,
+        file_data=file.body if file else None
+    ).apply()
+    return json({'status': 'ok', 'order_user_id': order_user.id})
 
 
 @blueprint.delete('/user-point')
