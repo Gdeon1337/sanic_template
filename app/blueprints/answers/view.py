@@ -157,7 +157,7 @@ async def create_user_point(request: Request, user):
 @blueprint.post('/file')
 @protected()
 async def create_user_point(request: Request):
-    order_user_id = request.json.get('order_user_id')
+    order_user_id = request.args.get('order_user_id')
     file = request.files.get('data')
     raise_if_empty(order_user_id)
     order_user = await OrderUsers.query.where(OrderUsers.id == order_user_id).gino.first_or_404()
