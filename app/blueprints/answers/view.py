@@ -138,14 +138,18 @@ async def new_answer(request: Request, user):
 async def create_user_point(request: Request, user):
     point_id = request.json.get('point_id')
     auction_price = request.json.get('auction_price')
-    google_disk_link=request.json.get('google_disk_link')
+    google_disk_link = request.json.get('google_disk_link')
+    file = request.files.get('data')
     raise_if_empty(point_id)
     point = await Order.query.where(Order.id == point_id).gino.first_or_404()
     await OrderUsers.create(
         user_id=user.id,
         order_id=point.id,
         auction_price=float(auction_price) if auction_price else None,
-        google_disk_link=google_disk_link
+        google_disk_link=google_disk_link,
+        file_name=file.name if file else None,
+        file_type=file.type if file else None,
+        file_data=file.body if file else None
     )
     return json({'status': 'ok'})
 
@@ -189,6 +193,20 @@ async def new_orders(request: Request):
 async def create_answer(request: Request):
     point = request.json.get('data')
     await create_points(point)
+    return json({'status': 'ok'})
+
+
+@blueprint.post('/registration')
+async def create_answer(request: Request):
+    login = request.json.get('data')
+    password = request.json.get('password')
+    raise_if_empty(login, password)
+    argon2 = request.app.argon2
+    rehashed_password = await argon2.async_hash(password)
+    user = User.query.where(User.login == login).gino.first()
+    if user:
+        return json({'status': 'Такой пользователь уже есть'})
+    await User.create(login=login, password=rehashed_password)
     return json({'status': 'ok'})
 
 

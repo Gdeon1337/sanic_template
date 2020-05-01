@@ -71,5 +71,4 @@ class CRUDModel(_CRUDModel):
 class Gino(_Gino):
     model_base_classes = (CRUDModel,)
 
-
 db = Gino()

@@ -63,7 +63,7 @@ async def get(request: Request):
 
 @blueprint.get('/in-activate')
 async def get_in(request: Request):
-    orders = await Order.query.where(Order.user_id == user.id).where(Order.activate.is_(False)).gino.all()
+    orders = await Order.query.where(Order.activate.is_(False)).gino.all()
     orders = [await load_json(order) for order in orders]
     return json(orders)
 
@@ -138,9 +138,25 @@ async def create_point(request: Request):
 
 
 async def load_json(point):
+    from base64 import b64encode
     u = OrderUsers.join(User).select()
     users = await u.where(OrderUsers.order_id == point.id)\
         .gino.load(OrderUsers.load(login=User.name)).all()
+    users_fi = []
+    for user in users:
+        users_fi.append(
+            {
+                'login': user.login,
+                'id': user.id,
+                'auction_price': user.auction_price,
+                'google_disk_link': user.google_disk_link,
+                'user_id': user.user_id,
+                'order_id': user.order_id,
+                'file_type': user.file_type,
+                'file_name': user.file_name,
+                'file_data': b64encode(user.file_data) if user.file_data else None,
+            }
+        )
     return {
         'info': {
             'id': str(point.id),
@@ -157,6 +173,6 @@ async def load_json(point):
                 'latitude': point.latitude,
                 'longitude': point.longitude
             },
-            'users': [user.to_dict() for user in users]
+            'users': users_fi
         }
     }

@@ -1,5 +1,5 @@
 from .models import (
-    Point, db, User, Order, OrderUsers, Role, StatusPoint
+    Point, db, User, Order, OrderUsers, Role, StatusPoint, File
 )
 
 
@@ -8,6 +8,7 @@ __all__ = [
     'db',
     'User',
     'Point',
+    'File',
     'OrderUsers',
     'Order',
     'Role'
