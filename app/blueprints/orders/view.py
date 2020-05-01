@@ -141,17 +141,17 @@ async def load_json(point):
     from base64 import b64encode
     u = OrderUsers.join(User).select()
     users = await u.where(OrderUsers.order_id == point.id)\
-        .gino.load(OrderUsers.load(login=User.name)).all()
+        .gino.load(OrderUsers.load(name=User.name)).all()
     users_fi = []
     for user in users:
         users_fi.append(
             {
-                'login': user.login,
-                'id': user.id,
+                'name': user.name,
+                'id': str(user.id),
                 'auction_price': user.auction_price,
                 'google_disk_link': user.google_disk_link,
-                'user_id': user.user_id,
-                'order_id': user.order_id,
+                'user_id': str(user.user_id),
+                'order_id': str(user.order_id),
                 'file_type': user.file_type,
                 'file_name': user.file_name,
                 'file_data': b64encode(user.file_data) if user.file_data else None,
@@ -167,7 +167,7 @@ async def load_json(point):
             'address': point.address,
             'client': point.client,
             'project_price_predict': point.project_price_predict,
-            'user_id': point.user_id,
+            'user_id': str(point.user_id),
             'comment': point.comment,
             'coordinates': {
                 'latitude': point.latitude,
