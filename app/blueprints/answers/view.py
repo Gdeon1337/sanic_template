@@ -151,12 +151,13 @@ async def create_user_point(request: Request, user):
         file_type=file.type if file else None,
         file_data=file.body if file else None
     )
-    return json({'status': 'ok', 'order_user_id': order_user.id})
+    return json({'status': 'ok', 'order_user_id': str(order_user.id)})
 
 
 @blueprint.post('/file')
 @protected()
 async def create_user_point(request: Request):
+    #import pdb; pdb.set_trace()
     order_user_id = request.args.get('order_user_id')
     file = request.files.get('data')
     raise_if_empty(order_user_id)
@@ -166,7 +167,7 @@ async def create_user_point(request: Request):
         file_type=file.type if file else None,
         file_data=file.body if file else None
     ).apply()
-    return json({'status': 'ok', 'order_user_id': order_user.id})
+    return json({'status': 'ok'})
 
 
 @blueprint.delete('/user-point')

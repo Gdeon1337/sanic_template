@@ -55,7 +55,7 @@ async def get(request: Request):
     order_id = request.args.get('order_id')
     if order_id:
         order = await Order.query.where(Order.id == order_id).gino.first_or_404()
-        return json(load_json(order))
+        return json(await load_json(order))
     orders = await Order.query.where(Order.activate.is_(True)).gino.all()
     orders = [await load_json(order) for order in orders]
     return json(orders)
@@ -101,8 +101,8 @@ async def update(request: Request):
     if comment:
         order = order.update(comment=comment)
     await order.apply()
-    order = await load_json(order)
-    return json(order)
+    #order = await load_json(order)
+    #return json(order)
 
 
 @blueprint.post('/activate')
@@ -166,6 +166,7 @@ async def load_json(point):
             'place': point.place,
             'address': point.address,
             'client': point.client,
+            'google_disk_link': point.google_doc_link,
             'project_price_predict': point.project_price_predict,
             'user_id': str(point.user_id),
             'comment': point.comment,
