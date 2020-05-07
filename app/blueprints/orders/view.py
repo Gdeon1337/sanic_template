@@ -40,6 +40,20 @@ async def create(request: Request):
     return json(order)
 
 
+@blueprint.post('/file')
+async def create(request: Request):
+    order_id = request.args.get('order_id')
+    file = request.files.get('data')
+    raise_if_empty(order_id)
+    order = await Order.query.where(Order.id == order_id).gino.first_or_404()
+    await order.update(
+        file_name=file.name if file else None,
+        file_type=file.type if file else None,
+        file_data=file.body if file else None
+    ).apply()
+    return json({'status': 'ok'})
+
+
 @blueprint.delete('')
 async def delete(request: Request):
     order_id = request.json.get('order_id')
@@ -170,6 +184,9 @@ async def load_json(point):
             'project_price_predict': point.project_price_predict,
             'user_id': str(point.user_id),
             'comment': point.comment,
+            'file_type': point.file_type,
+            'file_name': point.file_name,
+            'file_data': b64encode(point.file_data) if point.file_data else None,
             'coordinates': {
                 'latitude': point.latitude,
                 'longitude': point.longitude

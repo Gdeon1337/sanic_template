@@ -1,3 +1,5 @@
+from base64 import b64encode
+
 from sanic import Blueprint
 from sanic.request import Request
 from sanic.response import json
@@ -326,7 +328,10 @@ async def load_json_order(point):
             'coordinates': {
                 'latitude': point.latitude,
                 'longitude': point.longitude
-            }
+            },
+            'file_type': point.file_type,
+            'file_name': point.file_name,
+            'file_data': b64encode(point.file_data) if point.file_data else None
         },
         'application': {
             'application_source': None,

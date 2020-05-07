@@ -26,3 +26,7 @@ class Order(db.Model):
 
     user_id = db.Column(UUID(), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True, index=True, comment='ID пользователя')  # noqa)
     activate = db.Column(db.Boolean(), nullable=False, default=True)
+
+    file_type = db.Column(db.String(), nullable=True)
+    file_name = db.Column(db.String(), nullable=True)  # noqa
+    file_data = db.Column(db.LargeBinary(), nullable=True)  # noqa
