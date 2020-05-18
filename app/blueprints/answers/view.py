@@ -221,7 +221,7 @@ async def create_answer(request: Request):
     raise_if_empty(login, password)
     argon2 = request.app.argon2
     rehashed_password = await argon2.async_hash(password)
-    user = User.query.where(User.login == login).gino.first()
+    user = await User.query.where(User.login == login).gino.first()
     if user:
         return json({'status': 'Такой пользователь уже есть'})
     await User.create(login=login, password=rehashed_password)
