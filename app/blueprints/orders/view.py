@@ -41,7 +41,7 @@ async def create(request: Request):
 
 
 @blueprint.post('/file')
-async def create(request: Request):
+async def create_file(request: Request):
     order_id = request.args.get('order_id')
     file = request.files.get('data')
     raise_if_empty(order_id)

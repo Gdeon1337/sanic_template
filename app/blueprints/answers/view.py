@@ -158,7 +158,7 @@ async def create_user_point(request: Request, user):
 
 @blueprint.post('/file')
 @protected()
-async def create_user_point(request: Request):
+async def add_file(request: Request):
     #import pdb; pdb.set_trace()
     order_user_id = request.args.get('order_user_id')
     file = request.files.get('data')
@@ -215,7 +215,7 @@ async def create_answer(request: Request):
 
 
 @blueprint.post('/registration')
-async def create_answer(request: Request):
+async def registration(request: Request):
     login = request.json.get('data')
     password = request.json.get('password')
     raise_if_empty(login, password)
