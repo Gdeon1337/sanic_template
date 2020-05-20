@@ -19,6 +19,7 @@ def register_extensions(app: Sanic):
     extensions.register_ddtrace(app)
     extensions.register_argon2(app)
     extensions.register_jwt(app)
+    extensions.register_sanic_mail(app)
 
 
 def register_blueprints(app: Sanic):

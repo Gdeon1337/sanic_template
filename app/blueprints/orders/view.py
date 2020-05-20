@@ -160,6 +160,8 @@ async def load_json(point):
     for user in users:
         users_fi.append(
             {
+                'phone': user.phone,
+                'email': user.email,
                 'name': user.name,
                 'id': str(user.id),
                 'auction_price': user.auction_price,

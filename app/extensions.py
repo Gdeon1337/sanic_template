@@ -6,7 +6,7 @@ from sanic_cors import CORS
 from ddtrace import tracer
 from ddtrace.contrib.asyncio import context_provider
 from ddtrace.contrib.logging import patch as ddtrace_logging_patch
-
+from sanic_mail import Sanic_Mail
 from .helpers import password_hasher, trace
 
 
@@ -15,6 +15,10 @@ def register_db(app: Sanic):
     app.config.DB_ECHO = app.config.DEBUG
     db.init_app(app)
     app.db = db
+
+
+def register_sanic_mail(app: Sanic):
+    sender = Sanic_Mail(app)
 
 
 def register_async_helpers(app: Sanic):

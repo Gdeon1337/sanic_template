@@ -153,6 +153,11 @@ async def create_user_point(request: Request, user):
         file_type=file.type if file else None,
         file_data=file.body if file else None
     )
+    await request.app.send_email(
+        targetlist="кому",
+        subject="Новое предложение на заявку",
+        content="новое предложение на заявку"
+    )
     return json({'status': 'ok', 'order_user_id': str(order_user.id)})
 
 
@@ -201,6 +206,8 @@ async def new_orders(request: Request):
         json_users.append({
             'user_name': user.name,
             'user': user.login,
+            'phone': user.phone,
+            'email': user.email,
             'user_id': str(user.id),
             'orders': points
         })
@@ -218,13 +225,16 @@ async def create_answer(request: Request):
 async def registration(request: Request):
     login = request.json.get('data')
     password = request.json.get('password')
+    phone = request.json.get('phone')
+    email = request.json.get('email')
+
     raise_if_empty(login, password)
     argon2 = request.app.argon2
     rehashed_password = await argon2.async_hash(password)
     user = await User.query.where(User.login == login).gino.first()
     if user:
         return json({'status': 'Такой пользователь уже есть'})
-    await User.create(login=login, password=rehashed_password)
+    await User.create(login=login, phone=phone, email=email, password=rehashed_password.encode())
     return json({'status': 'ok'})
 
 

@@ -35,3 +35,8 @@ class Config(EnvConfig):
     CORS_SUPPORTS_CREDENTIALS: bool = True
     CORS_ORIGINS: Tuple[str] = ('.*',)
     CORS_SEND_WILDCARD: bool = False
+    MAIL_SENDER = 'gdeon1336@gmail.com'
+    MAIL_SENDER_PASSWORD = 'sandlabs'
+    MAIL_SEND_HOST = 'smtp.gmail.com'
+    MAIL_SEND_PORT = '465'
+    MAIL_TLS = True
