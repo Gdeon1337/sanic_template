@@ -146,7 +146,8 @@ async def create_point(request: Request):
         failure=False,
         status=StatusPoint.IN_WORK,
         brigadier=user.name,
-        google_disk_link=order_user.google_disk_link
+        google_disk_link=order_user.google_disk_link,
+        hermes_number=order.hermes_number
     )
     order = await load_json(order)
     return json(order)
@@ -167,6 +168,7 @@ async def load_json(point):
                 'id': str(user.id),
                 'auction_price': user.auction_price,
                 'google_disk_link': user.google_disk_link,
+                'create_date': user.create_date,
                 'user_id': str(user.user_id),
                 'order_id': str(user.order_id),
                 'file_type': user.file_type,
@@ -188,6 +190,7 @@ async def load_json(point):
             'user_id': str(point.user_id),
             'comment': point.comment,
             'file_type': point.file_type,
+            'hermes_number': point.hermes_number,
             'file_name': point.file_name,
             'file_data': b64encode(point.file_data) if point.file_data else None,
             'coordinates': {

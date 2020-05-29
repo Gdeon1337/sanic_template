@@ -19,6 +19,8 @@ class Order(db.Model):
     project_price_predict = db.Column(db.Numeric(precision=11, scale=4, asdecimal=False), nullable=True)
     comment = db.Column(db.String(), nullable=True)
 
+    hermes_number = db.Column(db.Integer(), nullable=True)
+
     latitude = db.Column(db.Float(), nullable=True)
     longitude = db.Column(db.Float(), nullable=True)
 

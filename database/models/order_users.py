@@ -18,3 +18,4 @@ class OrderUsers(db.Model):
     file_type = db.Column(db.String(), nullable=True)
     file_name = db.Column(db.String(), nullable=True)  # noqa
     file_data = db.Column(db.LargeBinary(), nullable=True)  # noqa
+    create_date = db.Column(db.DateTime(), nullable=True)

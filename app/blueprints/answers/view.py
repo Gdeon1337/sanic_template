@@ -7,6 +7,7 @@ from database import Point, User, Order, OrderUsers, StatusPoint
 from app.helpers.executors import gather
 from sanic_jwt.decorators import inject_user, protected
 from app.helpers.validators import raise_if_empty, raise_if_not_float
+from datetime import datetime
 
 blueprint = Blueprint('answers', url_prefix='/answers', strict_slashes=True)
 
@@ -151,7 +152,8 @@ async def create_user_point(request: Request, user):
         google_disk_link=google_disk_link,
         file_name=file.name if file else None,
         file_type=file.type if file else None,
-        file_data=file.body if file else None
+        file_data=file.body if file else None,
+        create_date=datetime.now()
     )
     await request.app.send_email(
         targetlist="lenaplakunova@yandex.ru",
@@ -347,7 +349,7 @@ async def load_json_order(point):
         'application': {
             'application_source': None,
             'hermes': {
-                'hermes_number': None,
+                'hermes_number': point.hermes_number,
                 'hermes_deadline': None,
                 'hermes_smr_successful': None
             }
