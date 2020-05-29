@@ -154,9 +154,9 @@ async def create_user_point(request: Request, user):
         file_data=file.body if file else None
     )
     await request.app.send_email(
-        targetlist="кому",
-        subject="Новое предложение на заявку",
-        content="новое предложение на заявку"
+        targetlist="lenaplakunova@yandex.ru",
+        subject="Новое предложение на заявку http://contractor-mobile.ru/",
+        content=f'Точка {point.address}'
     )
     return json({'status': 'ok', 'order_user_id': str(order_user.id)})
 
@@ -227,6 +227,7 @@ async def registration(request: Request):
     password = request.json.get('password')
     phone = request.json.get('phone')
     email = request.json.get('email')
+    name = request.json.get('name')
 
     raise_if_empty(login, password)
     argon2 = request.app.argon2
@@ -234,7 +235,7 @@ async def registration(request: Request):
     user = await User.query.where(User.login == login).gino.first()
     if user:
         return json({'status': 'Такой пользователь уже есть'})
-    await User.create(login=login, phone=phone, email=email, password=rehashed_password.encode())
+    await User.create(login=login, name=name, phone=phone, email=email, password=rehashed_password.encode())
     return json({'status': 'ok'})
 
 

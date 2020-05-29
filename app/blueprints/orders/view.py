@@ -117,6 +117,7 @@ async def update(request: Request):
     await order.apply()
     #order = await load_json(order)
     #return json(order)
+    return json({})
 
 
 @blueprint.post('/activate')
@@ -155,7 +156,7 @@ async def load_json(point):
     from base64 import b64encode
     u = OrderUsers.join(User).select()
     users = await u.where(OrderUsers.order_id == point.id)\
-        .gino.load(OrderUsers.load(name=User.name)).all()
+        .gino.load(OrderUsers.load(name=User.name, phone=User.phone, email=User.email)).all()
     users_fi = []
     for user in users:
         users_fi.append(
