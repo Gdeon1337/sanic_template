@@ -19,6 +19,7 @@ async def create(request: Request):
     project_price_predict = request.json.get('project_price_predict')
     comment = request.json.get('comment')
     google_doc_link = request.json.get('google_doc_link')
+    hermes_number = request.json.get('hermes_number')
 
     latitude = request.json.get('latitude')
     longitude = request.json.get('longitude')
