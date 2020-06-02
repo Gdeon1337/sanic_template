@@ -34,6 +34,7 @@ async def create(request: Request):
         client=client,
         project_price_predict=project_price_predict,
         comment=comment,
+        hermes_number=hermes_number,
         latitude=latitude,
         longitude=longitude
     )
