@@ -9,6 +9,7 @@ from sanic_jwt.decorators import inject_user, protected
 from app.helpers.validators import raise_if_empty, raise_if_not_float
 from datetime import datetime
 
+
 blueprint = Blueprint('answers', url_prefix='/answers', strict_slashes=True)
 
 

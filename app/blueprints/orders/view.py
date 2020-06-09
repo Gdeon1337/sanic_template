@@ -4,6 +4,8 @@ from sanic.response import json
 from database import Point, User, Order, OrderUsers, StatusPoint
 from sanic_jwt.decorators import inject_user, protected
 from app.helpers.validators import raise_if_empty, raise_if_not_float
+from datetime import datetime
+
 
 blueprint = Blueprint('orders', url_prefix='/orders', strict_slashes=True)
 
@@ -170,7 +172,7 @@ async def load_json(point):
                 'id': str(user.id),
                 'auction_price': user.auction_price,
                 'google_disk_link': user.google_disk_link,
-                'create_date': user.create_date,
+                'create_date': datetime.strptime(user.create_date, "%Y-%m-%d %H:%M:%S") if user.create_date else None,
                 'user_id': str(user.user_id),
                 'order_id': str(user.order_id),
                 'file_type': user.file_type,
